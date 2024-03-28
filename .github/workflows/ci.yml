@@ -1,24 +1,26 @@
-name: api-test
-on: push
+name: Robot Framework Tests
+
+on: [push, pull_request]
+
 jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
 
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-          if-no-files-found: ignore
-          
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cypress-videos
-          path: cypress/videos
-          if-no-files-found: ignore
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install robotframework
+
+    - name: Run Robot Framework tests
+      run: |
+        robot path/to/your/tests # Substitua 'path/to/your/tests' pelo caminho para seus arquivos de teste
